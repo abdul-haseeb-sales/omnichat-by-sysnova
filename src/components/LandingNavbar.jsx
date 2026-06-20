@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MessageCircle, Menu, X } from 'lucide-react';
-import '../css/LandingNavbar.css';
+import './LandingNavbar.css';
 
 export default function LandingNavbar() {
   const [isScrolled, setIsScrolled] = useState(false);

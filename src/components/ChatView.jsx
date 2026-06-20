@@ -4,15 +4,15 @@ import { Paperclip, Smile, SendHorizontal, ArrowLeft, Info } from 'lucide-react'
 const mockMessages = {
   '1': [
     { id: 'm1', sender: 'customer', content: 'Hi, I need help with my order #4521', time: '10:30 AM' },
-    { id: 'm2', sender: 'agent', content: 'Hello Ahmed! I\\'d be happy to help. Let me look up your order right away.', time: '10:31 AM' },
-    { id: 'm3', sender: 'customer', content: 'Thank you. I ordered 3 days ago but haven\\'t received any tracking info yet.', time: '10:32 AM' },
-    { id: 'm4', sender: 'agent', content: 'I can see your order was shipped yesterday. Here\\'s your tracking number: PKG-2026-4521-TR. You should receive it within 2-3 business days.', time: '10:33 AM' },
-    { id: 'm5', sender: 'customer', content: 'That\\'s great! Can I also change the delivery address?', time: '10:35 AM' },
+    { id: 'm2', sender: 'agent', content: "Hello Ahmed! I'd be happy to help. Let me look up your order right away.", time: '10:31 AM' },
+    { id: 'm3', sender: 'customer', content: "Thank you. I ordered 3 days ago but haven't received any tracking info yet.", time: '10:32 AM' },
+    { id: 'm4', sender: 'agent', content: "I can see your order was shipped yesterday. Here's your tracking number: PKG-2026-4521-TR. You should receive it within 2-3 business days.", time: '10:33 AM' },
+    { id: 'm5', sender: 'customer', content: "That's great! Can I also change the delivery address?", time: '10:35 AM' },
   ],
   '2': [
     { id: 'm1', sender: 'customer', content: 'Can you check the delivery status?', time: '9:45 AM' },
     { id: 'm2', sender: 'agent', content: 'Of course! Could you please share your order number?', time: '9:46 AM' },
-    { id: 'm3', sender: 'customer', content: 'It\\'s ORD-7823', time: '9:47 AM' },
+    { id: 'm3', sender: 'customer', content: "It's ORD-7823", time: '9:47 AM' },
   ]
 };
 
