@@ -1,23 +1,89 @@
-import { useState } from 'react';
-import { Paperclip, Smile, SendHorizontal, ArrowLeft, Info } from 'lucide-react';
-
-const mockMessages = {
-  '1': [
-    { id: 'm1', sender: 'customer', content: 'Hi, I need help with my order #4521', time: '10:30 AM' },
-    { id: 'm2', sender: 'agent', content: "Hello Ahmed! I'd be happy to help. Let me look up your order right away.", time: '10:31 AM' },
-    { id: 'm3', sender: 'customer', content: "Thank you. I ordered 3 days ago but haven't received any tracking info yet.", time: '10:32 AM' },
-    { id: 'm4', sender: 'agent', content: "I can see your order was shipped yesterday. Here's your tracking number: PKG-2026-4521-TR. You should receive it within 2-3 business days.", time: '10:33 AM' },
-    { id: 'm5', sender: 'customer', content: "That's great! Can I also change the delivery address?", time: '10:35 AM' },
-  ],
-  '2': [
-    { id: 'm1', sender: 'customer', content: 'Can you check the delivery status?', time: '9:45 AM' },
-    { id: 'm2', sender: 'agent', content: 'Of course! Could you please share your order number?', time: '9:46 AM' },
-    { id: 'm3', sender: 'customer', content: "It's ORD-7823", time: '9:47 AM' },
-  ]
-};
+import { useState, useEffect, useRef } from 'react';
+import { Paperclip, Smile, SendHorizontal, ArrowLeft, Info, MessageCircle } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function ChatView({ conversation, onToggleContact, onBack }) {
   const [input, setInput] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (conversation) {
+      fetchMessages();
+
+      const subscription = supabase
+        .channel(`public:messages:conversation_id=eq.${conversation.id}`)
+        .on('postgres_changes', { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `conversation_id=eq.${conversation.id}`
+        }, (payload) => {
+          setMessages(prev => [...prev, payload.new]);
+        })
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(subscription);
+      };
+    }
+  }, [conversation]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const fetchMessages = async () => {
+    const { data } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('conversation_id', conversation.id)
+      .order('created_at', { ascending: true });
+      
+    if (data) setMessages(data);
+  };
+
+  const handleSend = async () => {
+    if (!input.trim() || sending) return;
+    const text = input.trim();
+    setInput('');
+    setSending(true);
+
+    // Optimistic UI update
+    const tempMsg = {
+      id: 'temp-' + Date.now(),
+      sender_type: 'agent',
+      content: text,
+      created_at: new Date().toISOString()
+    };
+    setMessages(prev => [...prev, tempMsg]);
+
+    // Send via Edge Function
+    const { error } = await supabase.functions.invoke('send-message', {
+      body: { 
+        contactId: conversation.contact_id, 
+        channel: conversation.channel, 
+        messageText: text 
+      }
+    });
+
+    if (error) {
+      console.error("Error sending message:", error);
+      // Revert optimistic update on error
+      setMessages(prev => prev.filter(m => m.id !== tempMsg.id));
+      alert("Failed to send message. Please check console.");
+    } else {
+      // Save to database
+      await supabase.from('messages').insert({
+        conversation_id: conversation.id,
+        sender_type: 'agent',
+        content: text
+      });
+    }
+
+    setSending(false);
+  };
 
   if (!conversation) {
     return (
@@ -31,8 +97,6 @@ export default function ChatView({ conversation, onToggleContact, onBack }) {
     );
   }
 
-  const messages = mockMessages[conversation.id] || [];
-
   return (
     <div className="chat-container">
       <div className="chat-header">
@@ -40,9 +104,9 @@ export default function ChatView({ conversation, onToggleContact, onBack }) {
           <ArrowLeft size={20} />
         </button>
         <div className="chat-header-info">
-          <div className="chat-header-avatar">{conversation.contactInitial}</div>
+          <div className="chat-header-avatar">{conversation.contact_name?.charAt(0).toUpperCase()}</div>
           <div>
-            <h3>{conversation.contactName}</h3>
+            <h3>{conversation.contact_name}</h3>
             <span className={`badge badge-${conversation.channel}`}>{conversation.channel}</span>
           </div>
         </div>
@@ -52,15 +116,18 @@ export default function ChatView({ conversation, onToggleContact, onBack }) {
       </div>
 
       <div className="chat-messages">
-        <div className="chat-date-separator"><span>Today</span></div>
+        <div className="chat-date-separator"><span>Conversation History</span></div>
         {messages.map(msg => (
-          <div key={msg.id} className={`chat-message ${msg.sender === 'customer' ? 'msg-customer' : 'msg-agent'}`}>
+          <div key={msg.id} className={`chat-message ${msg.sender_type === 'customer' ? 'msg-customer' : 'msg-agent'}`}>
             <div className="msg-bubble">
               {msg.content}
             </div>
-            <span className="msg-time">{msg.time}</span>
+            <span className="msg-time">
+              {new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+            </span>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="chat-input-area">
@@ -70,10 +137,11 @@ export default function ChatView({ conversation, onToggleContact, onBack }) {
           placeholder="Type a message..." 
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           className="chat-input-field"
         />
         <button className="chat-input-btn"><Smile size={20} /></button>
-        <button className="chat-send-btn" disabled={!input.trim()}>
+        <button className="chat-send-btn" onClick={handleSend} disabled={!input.trim() || sending}>
           <SendHorizontal size={20} />
         </button>
       </div>

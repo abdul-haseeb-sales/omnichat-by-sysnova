@@ -1,21 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
-
-const mockConversations = [
-  { id: '1', contactName: 'Ahmed Khan', contactInitial: 'A', channel: 'whatsapp', lastMessage: 'Hi, I need help with my order #4521', timestamp: '2m ago', unread: 3, status: 'open' },
-  { id: '2', contactName: 'Sarah Miller', contactInitial: 'S', channel: 'facebook', lastMessage: 'Can you check the delivery status?', timestamp: '15m ago', unread: 1, status: 'open' },
-  { id: '3', contactName: 'Fatima Ali', contactInitial: 'F', channel: 'instagram', lastMessage: 'Love your products! Do you ship to Dubai?', timestamp: '1h ago', unread: 0, status: 'open' },
-  { id: '4', contactName: 'Omar Sheikh', contactInitial: 'O', channel: 'threads', lastMessage: 'Is the summer sale still on?', timestamp: '2h ago', unread: 0, status: 'open' },
-  { id: '5', contactName: 'Zara Hussain', contactInitial: 'Z', channel: 'whatsapp', lastMessage: 'Thank you for the quick response!', timestamp: '3h ago', unread: 0, status: 'resolved' },
-];
+import { supabase } from '../lib/supabase';
 
 export default function ConversationList({ selectedId, onSelectConversation }) {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [conversations, setConversations] = useState([]);
 
-  const filtered = mockConversations.filter(c => {
+  useEffect(() => {
+    fetchConversations();
+    
+    // Subscribe to realtime changes
+    const subscription = supabase
+      .channel('public:conversations')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'conversations' }, (payload) => {
+        fetchConversations(); // Refresh list on any change
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, []);
+
+  const fetchConversations = async () => {
+    const { data, error } = await supabase
+      .from('conversations')
+      .select('*')
+      .order('last_message_at', { ascending: false });
+      
+    if (!error && data) {
+      setConversations(data);
+    }
+  };
+
+  const filtered = conversations.filter(c => {
     if (filter !== 'all' && c.channel !== filter) return false;
-    if (search && !c.contactName.toLowerCase().includes(search.toLowerCase())) return false;
+    if (search && !c.contact_name.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
@@ -45,21 +66,24 @@ export default function ConversationList({ selectedId, onSelectConversation }) {
         </div>
       </div>
       <div className="list-content">
+        {conversations.length === 0 && <p className="p-4 text-muted text-center">No conversations yet.</p>}
         {filtered.map(conv => (
           <div 
             key={conv.id} 
-            className={`conv-item ${selectedId === conv.id ? 'active' : ''} ${conv.unread > 0 ? 'unread' : ''}`}
+            className={`conv-item ${selectedId === conv.id ? 'active' : ''} ${conv.unread_count > 0 ? 'unread' : ''}`}
             onClick={() => onSelectConversation(conv)}
           >
-            <div className="conv-avatar">{conv.contactInitial}</div>
+            <div className="conv-avatar">{conv.contact_name?.charAt(0).toUpperCase()}</div>
             <div className="conv-info">
               <div className="conv-name-row">
-                <span className="conv-name">{conv.contactName}</span>
-                <span className="conv-time">{conv.timestamp}</span>
+                <span className="conv-name">{conv.contact_name}</span>
+                <span className="conv-time">
+                  {new Date(conv.last_message_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                </span>
               </div>
               <div className="conv-msg-row">
-                <span className="conv-msg">{conv.lastMessage}</span>
-                {conv.unread > 0 && <span className="conv-unread-badge">{conv.unread}</span>}
+                <span className="conv-msg">{conv.last_message}</span>
+                {conv.unread_count > 0 && <span className="conv-unread-badge">{conv.unread_count}</span>}
               </div>
             </div>
           </div>
