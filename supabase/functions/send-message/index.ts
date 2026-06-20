@@ -1,9 +1,11 @@
 // @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// @ts-ignore
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const META_ACCESS_TOKEN = Deno.env.get("META_ACCESS_TOKEN")!;
-const WHATSAPP_PHONE_ID = Deno.env.get("WHATSAPP_PHONE_ID")!;
-const FACEBOOK_PAGE_ID = Deno.env.get("FACEBOOK_PAGE_ID")!;
+const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,23 +13,42 @@ const corsHeaders = {
 };
 
 serve(async (req: Request) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
+    // Get user from auth header
+    const authHeader = req.headers.get('Authorization')!;
+    const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    
+    if (authError || !user) {
+      return new Response("Unauthorized", { status: 401, headers: corsHeaders });
+    }
+
     const { contactId, channel, messageText } = await req.json();
 
     if (!contactId || !channel || !messageText) {
       return new Response("Missing required parameters", { status: 400, headers: corsHeaders });
     }
 
+    // Lookup user's access token for this channel
+    const { data: channelData } = await supabase
+      .from('user_channels')
+      .select('page_id, access_token')
+      .eq('user_id', user.id)
+      .eq('channel_type', channel)
+      .single();
+
+    if (!channelData) {
+      return new Response(`No ${channel} account connected.`, { status: 400, headers: corsHeaders });
+    }
+
     let url = "";
     let payload = {};
 
     if (channel === "whatsapp") {
-      url = `https://graph.facebook.com/v19.0/${WHATSAPP_PHONE_ID}/messages`;
+      url = `https://graph.facebook.com/v19.0/${channelData.page_id}/messages`;
       payload = {
         messaging_product: "whatsapp",
         recipient_type: "individual",
@@ -36,7 +57,7 @@ serve(async (req: Request) => {
         text: { preview_url: false, body: messageText }
       };
     } else if (channel === "facebook" || channel === "instagram") {
-      url = `https://graph.facebook.com/v19.0/${FACEBOOK_PAGE_ID}/messages`;
+      url = `https://graph.facebook.com/v19.0/${channelData.page_id}/messages`;
       payload = {
         recipient: { id: contactId },
         message: { text: messageText }
@@ -48,7 +69,7 @@ serve(async (req: Request) => {
     const response = await fetch(url, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${META_ACCESS_TOKEN}`,
+        "Authorization": `Bearer ${channelData.access_token}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify(payload)
