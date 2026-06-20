@@ -1,0 +1,22 @@
+/* ConversationList — component-scoped styles
+   Main styles live in dashboard.css */
+
+.conv-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-6);
+  gap: var(--space-3);
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.conv-list-empty svg {
+  opacity: 0.3;
+}
+
+.conv-list-empty p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}

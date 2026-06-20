@@ -1,0 +1,27 @@
+/* ChatView — component-scoped styles
+   Main styles live in dashboard.css */
+
+.chat-scroll-bottom {
+  position: absolute;
+  bottom: 100px;
+  right: 24px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease);
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+}
+
+.chat-scroll-bottom:hover {
+  background: var(--bg-surface);
+  color: var(--text-bright);
+  transform: translateY(-2px);
+}

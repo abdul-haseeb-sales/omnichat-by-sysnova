@@ -1,0 +1,116 @@
+/* ============================================
+   OMNICHAT BY SYSNOVA — CSS Variables
+   Premium Dark Theme with Indigo Accents
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* ── Primary Brand ── */
+  --brand-50:  #EEF2FF;
+  --brand-100: #E0E7FF;
+  --brand-200: #C7D2FE;
+  --brand-300: #A5B4FC;
+  --brand-400: #818CF8;
+  --brand-500: #6366F1;
+  --brand-600: #4F46E5;
+  --brand-700: #4338CA;
+  --brand-800: #3730A3;
+  --brand-900: #312E81;
+
+  /* ── Accent (Purple) ── */
+  --accent-400: #A78BFA;
+  --accent-500: #8B5CF6;
+  --accent-600: #7C3AED;
+
+  /* ── Background Scale (Dark) ── */
+  --bg-deepest: #050816;
+  --bg-deep:    #0B0F1A;
+  --bg-base:    #111827;
+  --bg-raised:  #1F2937;
+  --bg-surface: #283548;
+  --bg-hover:   #374151;
+
+  /* ── Text Scale ── */
+  --text-bright:  #F9FAFB;
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --text-muted:   #6B7280;
+  --text-dim:     #4B5563;
+
+  /* ── Status Colors ── */
+  --success:    #10B981;
+  --success-bg: rgba(16, 185, 129, 0.12);
+  --warning:    #F59E0B;
+  --warning-bg: rgba(245, 158, 11, 0.12);
+  --error:      #EF4444;
+  --error-bg:   rgba(239, 68, 68, 0.12);
+  --info:       #3B82F6;
+  --info-bg:    rgba(59, 130, 246, 0.12);
+
+  /* ── Channel Colors ── */
+  --facebook:   #1877F2;
+  --instagram:  #E4405F;
+  --instagram-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  --threads:    #000000;
+  --whatsapp:   #25D366;
+
+  /* ── Border ── */
+  --border:        rgba(255, 255, 255, 0.06);
+  --border-light:  rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --border-brand:  rgba(99, 102, 241, 0.30);
+
+  /* ── Shadows ── */
+  --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl:  0 16px 48px rgba(0, 0, 0, 0.6);
+  --glow-brand: 0 0 20px rgba(99, 102, 241, 0.25);
+  --glow-brand-lg: 0 0 40px rgba(99, 102, 241, 0.35);
+
+  /* ── Glass Effect ── */
+  --glass-bg:     rgba(17, 24, 39, 0.60);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur:   16px;
+
+  /* ── Typography ── */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* ── Radius ── */
+  --radius-xs:   6px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-2xl:  24px;
+  --radius-pill: 999px;
+
+  /* ── Spacing ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ── Animation ── */
+  --ease:      cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-snap: cubic-bezier(0.6, 0.05, 0, 0.9);
+  --duration-fast:   150ms;
+  --duration-normal: 250ms;
+  --duration-slow:   400ms;
+
+  /* ── Layout ── */
+  --max-width: 1280px;
+  --sidebar-width: 72px;
+  --sidebar-expanded: 240px;
+  --conversation-panel: 360px;
+  --navbar-height: 64px;
+}

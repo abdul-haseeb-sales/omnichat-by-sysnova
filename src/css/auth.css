@@ -1,0 +1,300 @@
+/* ============================================
+   OMNICHAT BY SYSNOVA — Auth Pages CSS
+   ============================================ */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: var(--bg-deepest);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Background Orbs ── */
+.auth-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: float 10s infinite ease-in-out alternate;
+  z-index: 0;
+}
+
+.auth-orb--1 {
+  width: 400px;
+  height: 400px;
+  background: var(--brand-600);
+  top: -10%;
+  left: -10%;
+  animation-delay: 0s;
+}
+
+.auth-orb--2 {
+  width: 300px;
+  height: 300px;
+  background: var(--accent-600);
+  bottom: -5%;
+  right: -5%;
+  animation-delay: -5s;
+}
+
+.auth-orb--3 {
+  width: 250px;
+  height: 250px;
+  background: var(--brand-400);
+  top: 40%;
+  left: 60%;
+  animation-delay: -2s;
+  opacity: 0.2;
+}
+
+/* ── Auth Card ── */
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8) var(--space-6);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp var(--duration-slow) var(--ease-out);
+}
+
+@media (min-width: 480px) {
+  .auth-card {
+    padding: var(--space-10) var(--space-8);
+  }
+}
+
+/* ── Logo & Header ── */
+.auth-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.auth-logo-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--brand-500), var(--accent-500));
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-bottom: var(--space-4);
+  box-shadow: var(--glow-brand);
+}
+
+.auth-logo-text h1 {
+  font-size: 1.5rem;
+  margin-bottom: var(--space-1);
+}
+
+.auth-logo-text p {
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+/* ── Form Inputs ── */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.auth-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.auth-input-wrapper label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.auth-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-input-icon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.auth-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-3) var(--space-3) 40px;
+  color: var(--text-bright);
+  font-size: 0.9375rem;
+  transition: all var(--duration-fast) ease;
+}
+
+.auth-input--has-toggle {
+  padding-right: 40px;
+}
+
+.auth-input::placeholder {
+  color: var(--text-dim);
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.auth-input--error {
+  border-color: var(--error) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  right: var(--space-3);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color var(--duration-fast) ease;
+}
+
+.auth-password-toggle:hover {
+  color: var(--text-primary);
+}
+
+.auth-field-error {
+  color: var(--error);
+  font-size: 0.8125rem;
+  margin-top: 2px;
+}
+
+/* ── Forgot Password ── */
+.auth-forgot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -8px;
+}
+
+.auth-forgot button {
+  color: var(--brand-300);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.auth-forgot button:hover {
+  color: var(--brand-200);
+  text-decoration: underline;
+}
+
+/* ── Submit Button ── */
+.auth-submit {
+  background: linear-gradient(135deg, var(--brand-500), var(--accent-500));
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease);
+  box-shadow: var(--glow-brand);
+  margin-top: var(--space-2);
+}
+
+.auth-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--glow-brand-lg);
+}
+
+.auth-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.auth-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-submit-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* ── Footer ── */
+.auth-footer {
+  margin-top: var(--space-6);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.auth-footer a {
+  color: var(--brand-400);
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.auth-footer a:hover {
+  color: var(--brand-300);
+  text-decoration: underline;
+}
+
+/* ── Alerts ── */
+.auth-alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  animation: fadeIn var(--duration-fast) ease;
+}
+
+.auth-alert-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.auth-alert--error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #FCA5A5;
+}
+
+.auth-alert--success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #6EE7B7;
+}

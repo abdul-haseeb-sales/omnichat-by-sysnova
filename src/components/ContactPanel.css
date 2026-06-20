@@ -1,0 +1,8 @@
+/* ContactPanel — component-scoped styles
+   Main styles live in dashboard.css */
+
+.contact-panel-footer {
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
