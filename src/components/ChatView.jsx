@@ -149,5 +149,3 @@ export default function ChatView({ conversation, onToggleContact, onBack }) {
   );
 }
 
-// Ensure MessageCircle is imported for the empty state
-import { MessageCircle } from 'lucide-react';
